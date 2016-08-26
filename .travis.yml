@@ -1,0 +1,43 @@
+
+language: cpp
+
+
+env:
+  global:
+  - ExternalData_OBJECT_STORES="${HOME}/.ExternalData"
+  - ITK_REPOSITORY="${ExternalData_OBJECT_STORES}/ITK.git"
+  - ITK_MODULE=ModuleTemplate
+  - ITK_TAG=master
+  - PROJ_SRC="${TRAVIS_BUILD_DIR}"
+  - CMAKE_DOWNLOAD_FILE: cmake-3.6.0-Linux-x86_64.sh
+
+cache:
+  directories:
+    - ${ExternalData_OBJECT_STORES}
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+    - os: osx
+      osx_image: xcode7.3
+    - os: osx
+      osx_image: xcode6.4
+
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ninja $( command -V cmake &>2 /dev/null || echo "cmake" ); fi
+
+before_script:
+   - cmake --version
+   - ( cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${ITK_REPOSITORY} ]]; then git clone --bare https://ITK.org/ITK.git; fi && cd ${ITK_REPOSITORY} && git fetch origin )
+   - cd ${PROJ_SRC} && git clone ${ITK_REPOSITORY} -b "${ITK_TAG}" && ( cd ITK/Modules/Remote && ln -s ${PROJ_SRC} module )
+   - mkdir -p bld
+
+script:
+   - cd bld
+   - cmake "-DMAKE_CXX_FLAGS=-std=c++11" -D "Module_${ITK_MODULE}:BOOL=ON" -D  BUILD_TESTING:BOOL=ON "${PROJ_SRC}/ITK"
+   - make -j 2 "${ITK_MODULE}-all"
+   - ctest -L "${ITK_MODULE}"

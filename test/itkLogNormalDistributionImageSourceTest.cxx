@@ -39,7 +39,7 @@ int itkLogNormalDistributionImageSourceTest( int argc, char * argv[] )
   typedef itk::LogNormalDistributionImageSource< ImageType > DistributionSourceType;
   DistributionSourceType::Pointer distributionSource = DistributionSourceType::New();
 
-  EXERCISE_BASIC_OBJECT_METHODS( distributionSource, LogNormalDistributionImageSource );
+  EXERCISE_BASIC_OBJECT_METHODS( distributionSource, LogNormalDistributionImageSource, GenerateImageSource );
 
   distributionSource->SetSeed( 23334 );
   TEST_SET_GET_VALUE( 23334, distributionSource->GetSeed() );
