@@ -11,3 +11,5 @@ else()
   set(ITK_DIR ${CMAKE_BINARY_DIR})
   itk_module_impl()
 endif()
+
+itk_module_examples()
