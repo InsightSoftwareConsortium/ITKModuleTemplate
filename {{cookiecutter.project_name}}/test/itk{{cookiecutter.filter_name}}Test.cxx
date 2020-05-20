@@ -71,7 +71,7 @@ int itk{{ cookiecutter.filter_name }}Test(int argc, char * argv[])
   using FilterType = itk::{{ cookiecutter.filter_name }}<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
-  EXERCISE_BASIC_OBJECT_METHODS(filter, {{ cookiecutter.filter_name }}, ImageToImageFilter);
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, {{ cookiecutter.filter_name }}, ImageToImageFilter);
 
   // Create input image to avoid test dependencies.
   ImageType::SizeType size;
@@ -91,7 +91,7 @@ int itk{{ cookiecutter.filter_name }}Test(int argc, char * argv[])
   writer->SetInput(filter->GetOutput());
   writer->SetUseCompression(true);
 
-  TRY_EXPECT_NO_EXCEPTION(writer->Update());
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
 
   std::cout << "Test finished." << std::endl;

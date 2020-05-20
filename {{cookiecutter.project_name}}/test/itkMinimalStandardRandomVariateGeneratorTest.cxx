@@ -27,11 +27,11 @@ itkMinimalStandardRandomVariateGeneratorTest(int, char *[])
   typedef itk::Statistics::MinimalStandardRandomVariateGenerator GeneratorType;
   GeneratorType::Pointer                                         generator = GeneratorType::New();
 
-  EXERCISE_BASIC_OBJECT_METHODS(generator, MinimalStandardRandomVariateGenerator, RandomVariateGeneratorBase);
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(generator, MinimalStandardRandomVariateGenerator, RandomVariateGeneratorBase);
 
   generator->Initialize(324);
 
-  TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(generator->GetVariate(), 1.35581, 4, 0.0001));
+  ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(generator->GetVariate(), 1.35581, 4, 0.0001));
 
   return EXIT_SUCCESS;
 }
