@@ -249,7 +249,7 @@ jobs:
     - name: Publish Python package as GitHub Artifact
       uses: actions/upload-artifact@v1
       with:
-        name: WindowWheel3.${{ "{{" }} matrix.python-version-minor {{ "}}" }}
+        name: WindowsWheel3.${{ "{{" }} matrix.python-version-minor {{ "}}" }}
         path: ../../im/dist
 
   publish-python-packages-to-pypi:
