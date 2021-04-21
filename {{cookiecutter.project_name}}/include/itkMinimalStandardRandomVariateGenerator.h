@@ -53,7 +53,7 @@ namespace Statistics
 class {{ cookiecutter.module_name }}_EXPORT MinimalStandardRandomVariateGenerator : public RandomVariateGeneratorBase
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MinimalStandardRandomVariateGenerator);
+  ITK_DISALLOW_COPY_AND_MOVE(MinimalStandardRandomVariateGenerator);
 
   /** Standard class typedefs. */
   using Self = MinimalStandardRandomVariateGenerator;

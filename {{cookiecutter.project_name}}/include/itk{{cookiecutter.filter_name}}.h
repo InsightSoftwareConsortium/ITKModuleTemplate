@@ -37,7 +37,7 @@ template <typename TInputImage, typename TOutputImage>
 class {{ cookiecutter.filter_name }} : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN({{ cookiecutter.filter_name }});
+  ITK_DISALLOW_COPY_AND_MOVE({{ cookiecutter.filter_name }});
 
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
