@@ -3,7 +3,7 @@ ITKModuleTemplate
 
 [![][gha-img]][gha-link]
 
-[gha-img]: https://github.com/InsightSoftwareConsortium/ITKModuleTemplate/actions/workflows/build-test-package.yml/badge.svg)
+[gha-img]: https://github.com/InsightSoftwareConsortium/ITKModuleTemplate/actions/workflows/build-test-package.yml/badge.svg
 [gha-link]: https://github.com/InsightSoftwareConsortium/ITKModuleTemplate/actions/workflows/build-test-package.yml
 
 
