@@ -1,8 +1,9 @@
 {{ cookiecutter.project_name }}
 =================================
 
-.. image:: {{ cookiecutter.download_url }}/workflows/Build,%20test,%20package/badge.svg
-    :alt:    Build Status
+.. image:: {{ cookiecutter.download_url }}/actions/workflows/build-test-package.yml/badge.svg
+    :target: {{ cookiecutter.download_url }}/actions/workflows/build-test-package.yml
+    :alt: Build Status
 
 .. image:: https://img.shields.io/pypi/v/{{ cookiecutter.python_package_name }}.svg
     :target: https://pypi.python.org/pypi/{{ cookiecutter.python_package_name }}
