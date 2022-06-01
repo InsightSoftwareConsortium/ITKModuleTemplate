@@ -10,7 +10,7 @@ ITKModuleTemplate
 Overview
 --------
 
-This is a module for the [Insight Toolkit (ITK)](http://itk.org) for
+This is a module for the [Insight Toolkit (ITK)](https://itk.org) for
 segmentation and registration. It is designed to work with the ITK
 modular system.
 
@@ -88,7 +88,7 @@ associated repository, then add
 Remote Module
 -------------
 
-After an [Insight Journal](http://www.insight-journal.org/) article has
+After an [Insight Journal](https://www.insight-journal.org/) article has
 been submitted, the module can be included in ITK as a [remote
 module](https://itk.org/ITKSoftwareGuide/html/Book1/ITKSoftwareGuide-Book1ch9.html#x55-1640009.7).
 Add a file in "ITK/Modules/Remote" called "YourModule.remote.cmake", for
@@ -97,7 +97,7 @@ followlowing contents:
 
     itk_fetch_module(MyModule
       "A description of the a module."
-      GIT_REPOSITORY http://github.com/myuser/ITKMyModule.git
+      GIT_REPOSITORY https://github.com/myuser/ITKMyModule.git
       GIT_TAG abcdef012345
       )
 

@@ -6,7 +6,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *         https://www.apache.org/licenses/LICENSE-2.0.txt
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,7 +40,7 @@ namespace Statistics
  * where \f$a\f$ is the Multiplier \f$c\f$ is the Increment and \f$m\f$ is
  * the Modulus.
  *
- * http://en.wikipedia.com/wiki/Linear_congruential_generator
+ * https://en.wikipedia.com/wiki/Linear_congruential_generator
  *
  * The random numbers generated have a period \f$m\f$.
  *
