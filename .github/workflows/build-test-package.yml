@@ -3,8 +3,8 @@ name: Build, test, package
 on: [push,pull_request]
 
 env:
-  itk-git-tag: "v5.3rc04"
-  itk-wheel-tag: "v5.3rc04.post2"
+  itk-git-tag: "171fb2ba33a87041f99328a2f26612ff33aa9cc8"
+  itk-wheel-tag: "v5.3rc04.post3"
 
 jobs:
   build-test-cxx:
@@ -177,7 +177,7 @@ jobs:
       run: |
         cd "${GITHUB_WORKSPACE}/Evaluated/ITKModuleTemplate"
         export ITK_PACKAGE_VERSION=${{ env.itk-wheel-tag }}
-        for tarball in "" "-manylinux2014"; do
+        for tarball in "-manylinux_2_28" "-manylinux2014"; do
           rm -rf ITKPythonPackage
           export TARBALL_SPECIALIZATION=${tarball}
           ../../dockcross-manylinux-download-cache-and-build-module-wheels.sh cp${{ matrix.python-version }}
@@ -199,7 +199,7 @@ jobs:
 
     - name: 'Specific XCode version'
       run: |
-        sudo xcode-select -s "/Applications/Xcode_11.7.app"
+        sudo xcode-select -s "/Applications/Xcode_13.2.1.app"
 
     - name: Get specific version of CMake, Ninja
       uses: lukka/get-cmake@v3.18.3
