@@ -161,6 +161,9 @@ jobs:
       with:
         python-version: 3.8
 
+    - name: Get specific version of CMake, Ninja
+      uses: lukka/get-cmake@v3.18.3
+
     - name: Evaluate template
       shell: bash
       run: |
