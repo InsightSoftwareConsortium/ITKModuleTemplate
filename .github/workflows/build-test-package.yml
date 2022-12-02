@@ -29,10 +29,10 @@ jobs:
             cmake-build-type: "MinSizeRel"
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: "3.8"
 
@@ -146,7 +146,7 @@ jobs:
         python-version: ["37", "38", "39", "310", "311"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: 'Free up disk space'
       run: |
@@ -164,7 +164,7 @@ jobs:
         unzstd --version
 
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: "3.8"
 
@@ -207,7 +207,7 @@ jobs:
       max-parallel: 2
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: 'Specific XCode version'
       run: |
@@ -222,7 +222,7 @@ jobs:
         chmod u+x macpython-download-cache-and-build-module-wheels.sh
 
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: "3.8"
 
@@ -255,7 +255,7 @@ jobs:
         python-version-minor: ["7", "8", "9", "10", "11"]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: 'Install Python'
       run: |
@@ -263,7 +263,7 @@ jobs:
         $pythonVersion = "3.${{ matrix.python-version-minor }}"
         iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/scikit-build/scikit-ci-addons/master/windows/install-python.ps1'))
 
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v3
       with:
         python-version: '3.x'
 
@@ -271,7 +271,7 @@ jobs:
       uses: lukka/get-cmake@v3.22.2
 
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: "3.8"
 
