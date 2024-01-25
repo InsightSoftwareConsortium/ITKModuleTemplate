@@ -54,7 +54,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information. */
-  itkTypeMacro({{ cookiecutter.filter_name }}, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro({{ cookiecutter.filter_name }});
 
   /** Standard New macro. */
   itkNewMacro(Self);
