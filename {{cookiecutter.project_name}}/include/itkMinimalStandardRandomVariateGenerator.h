@@ -66,7 +66,7 @@ public:
   using NormalGeneratorType = itk::Statistics::NormalVariateGenerator;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MinimalStandardRandomVariateGenerator, RandomVariateGeneratorBase);
+  itkOverrideGetNameOfClassMacro(MinimalStandardRandomVariateGenerator);
 
   /** Method for creation through the object factory.  */
   itkNewMacro(Self);
