@@ -8,26 +8,44 @@ import os
 import re
 import sys
 import argparse
+import runpy
+from packaging.version import Version
+
+
+def make_shim():
+    mydict = {}
+
+    def setup_shim(**kwargs):
+        mydict.update(kwargs)
+
+    return mydict, setup_shim
 
 def setup_py_to_pyproject_toml(setup_python_path):
     if not os.path.exists(setup_python_path):
         print('setup.py file not found')
         sys.exit(1)
 
-    with open(setup_python_path, 'r') as f:
-        setup_py = f.read()
+    import setuptools
+    import skbuild
+    capture, shim = make_shim()
+    setuptools.setup = shim
+    skbuild.setup = shim
 
-    project_name = re.search(r'name\s*=\s*[\'"]([^\'"]*)[\'"]', setup_py).group(1)
-    project_version = re.search(r'version\s*=\s*[\'"]([^\'"]*)[\'"]', setup_py).group(1)
-    project_description = re.search(r'description\s*=\s*[\'"]([^\'"]*)[\'"]', setup_py).group(1)
-    project_author = re.search(r'author\s*=\s*[\'"]([^\'"]*)[\'"]', setup_py).group(1)
-    project_author_email = re.search(r'author_email\s*=\s*[\'"]([^\'"]*)[\'"]', setup_py).group(1)
-    project_url = re.search(r'url\s*=\s*r?[\'"]([^\'"]*)[\'"]', setup_py).group(1)
-    project_classifiers = re.findall(r'classifiers\s*=\s*\[([^\]]*)\]', setup_py, re.DOTALL)
-    project_classifiers = project_classifiers[0].replace('\n', '').replace(' ', '').replace('"', '').split(',')
-    project_packages = re.findall(r'packages\s*=\s*\[([^\]]*)\]', setup_py, re.DOTALL)
-    project_packages = project_packages[0].replace('\n', '').replace(' ', '').replace('"', '').split(',')
-    project_install = re.findall(r'install_requires\s*=\s*\[([^\]]*)\]', setup_py, re.DOTALL)
+    runpy.run_path(setup_python_path)
+
+    # with open(setup_python_path, 'r') as f:
+    #     setup_py = f.read()
+
+    project_name = capture['name']
+    current_version = Version(capture['version'])
+    project_version = f'{current_version.major}.{current_version.minor + 1}.0'
+    project_description = capture['description']
+    project_author = capture['author']
+    project_author_email = capture['author_email']
+    project_url = capture['url']
+    project_classifiers = capture['classifiers']
+    project_packages = capture['packages']
+    project_install = capture['install_requires']
 
     # Load the file "./{{cookiecutter.project_name}}/pyproject.toml" as the pyproject.toml template
     script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -47,7 +65,7 @@ def setup_py_to_pyproject_toml(setup_python_path):
     if os.path.exists(os.path.join(setup_dirname, 'README.md')):
         template = template.replace('README.rst', 'README.md')
 
-    deps = [eval(str(d).strip()) for d in project_install]
+    deps = [str(d).strip() for d in project_install]
     new_deps = []
     for dep in deps:
         if '==' in dep or '>=' in dep:
