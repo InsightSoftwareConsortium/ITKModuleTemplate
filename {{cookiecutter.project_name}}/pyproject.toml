@@ -6,7 +6,7 @@ build-backend = "scikit_build_core.build"
 name = "{{ cookiecutter.python_package_name }}"
 version = "0.1.0"
 description = "{{ cookiecutter.project_short_description }}"
-readme = "README.rst"
+readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
     { name = "{{ cookiecutter.full_name }}", email = "{{ cookiecutter.email }}" },
