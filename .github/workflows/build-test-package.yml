@@ -9,10 +9,11 @@ on:
       - main
 
 env:
-  itk-git-tag: "v5.4.0"
+  # v5.4.0 + additional patches on the release-5.4 branch
+  itk-git-tag: "49413c3a9e8ecf0f912534e7c13f4c7bc3799d60"
   itk-wheel-tag: "v5.4.0"
   # v5.4.0 + fixes
-  itk-python-package-tag: "a52d9b596b4f0da5ddb770ee99851e5c65ca3053"
+  itk-python-package-tag: "830d14cc40199f438001ee493288139fb75bba92"
 
 jobs:
   build-test-cxx:
@@ -20,7 +21,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-12]
+        os: [ubuntu-22.04, windows-2022, macos-13, macos-14]
         include:
           - os: ubuntu-22.04
             c-compiler: "gcc"
@@ -30,13 +31,23 @@ jobs:
             c-compiler: "cl.exe"
             cxx-compiler: "cl.exe"
             cmake-build-type: "Release"
-          - os: macos-12
+          - os: macos-13
+            c-compiler: "clang"
+            cxx-compiler: "clang++"
+            cmake-build-type: "MinSizeRel"
+          - os: macos-14
             c-compiler: "clang"
             cxx-compiler: "clang++"
             cmake-build-type: "MinSizeRel"
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Free Disk Space (Ubuntu)
+      if: matrix.os == 'ubuntu-22.04'
+      uses: jlumbroso/free-disk-space@v1.3.1
+      with:
+        large-packages: false
 
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
@@ -52,6 +63,16 @@ jobs:
     - name: Get specific version of CMake, Ninja
       uses: lukka/get-cmake@v3.29.0
 
+    - name: 'Specific XCode version'
+      if: matrix.os == 'macos-13'
+      run: |
+        sudo xcode-select -s "/Applications/Xcode_14.3.1.app"
+
+    - name: 'Specific XCode version'
+      if: matrix.os == 'macos-14'
+      run: |
+        sudo xcode-select -s "/Applications/Xcode_15.0.1.app"
+
     - name: Download ITK
       run: |
         cd ..
@@ -61,6 +82,7 @@ jobs:
 
     - name: Build ITK
       if: matrix.os != 'windows-2022'
+      shell: bash
       run: |
         cd ..
         mkdir ITK-build
@@ -70,14 +92,15 @@ jobs:
 
     - name: Build ITK
       if: matrix.os == 'windows-2022'
+      shell: pwsh
       run: |
+        Set-PSDebug -Trace 1
         cd ..
         mkdir ITK-build
         cd ITK-build
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64 -SkipAutomaticLocation
         cmake -DCMAKE_C_COMPILER:FILEPATH="${{ matrix.c-compiler }}" -DBUILD_SHARED_LIBS:BOOL=ON -DCMAKE_CXX_COMPILER="${{ matrix.cxx-compiler }}" -DCMAKE_BUILD_TYPE:STRING=${{ matrix.cmake-build-type }} -DBUILD_TESTING:BOOL=OFF -GNinja ../ITK
         ninja
-      shell: cmd
 
     - name: Fetch CTest driver script
       run: |
@@ -140,17 +163,17 @@ jobs:
 
     - name: Build and test
       if: matrix.os == 'windows-2022'
+      shell: pwsh
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64 -SkipAutomaticLocation
         ctest --output-on-failure -j 2 -V -S dashboard.cmake
-      shell: cmd
 
   build-linux-python-packages:
     runs-on: ubuntu-22.04
     strategy:
       max-parallel: 2
       matrix:
-        python-version: ["38", "39", "310", "311"]
+        python-version: ["39", "310", "311"]
 
     steps:
     - uses: actions/checkout@v4
@@ -209,18 +232,18 @@ jobs:
         path: Evaluated/ITKModuleTemplate/dist
 
   build-macos-python-packages:
-    runs-on: macos-12
+    runs-on: macos-13
     strategy:
       max-parallel: 2
       matrix:
-        python-version: ["38", "39", "310", "311"]
+        python-version: ["39", "310", "311"]
 
     steps:
     - uses: actions/checkout@v4
 
     - name: 'Specific XCode version'
       run: |
-        sudo xcode-select -s "/Applications/Xcode_13.2.1.app"
+        sudo xcode-select -s "/Applications/Xcode_14.3.1.app"
 
     - name: Get specific version of CMake, Ninja
       uses: lukka/get-cmake@v3.29.0
@@ -261,7 +284,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python-version-minor: ["8", "9", "10", "11"]
+        python-version-minor: ["9", "10", "11"]
 
     steps:
     - uses: actions/checkout@v4
