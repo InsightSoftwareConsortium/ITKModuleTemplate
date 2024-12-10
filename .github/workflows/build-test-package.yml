@@ -14,6 +14,7 @@ env:
   itk-wheel-tag: "v5.4.0"
   # v5.4.0 + fixes
   itk-python-package-tag: "830d14cc40199f438001ee493288139fb75bba92"
+  itk-python-package-org: "InsightSoftwareConsortium"
 
 jobs:
   build-test-cxx:
@@ -236,7 +237,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python-version: ["39", "310", "311"]
+        python3-minor-version: ["9", "10", "11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -270,13 +271,14 @@ jobs:
         cd "${GITHUB_WORKSPACE}/Evaluated/ITKModuleTemplate"
         export ITK_PACKAGE_VERSION=${{ env.itk-wheel-tag }}
         export ITKPYTHONPACKAGE_TAG=${{ env.itk-python-package-tag }}
+        export ITKPYTHONPACKAGE_ORG=${{ env.itk-python-package-org }}
         export MACOSX_DEPLOYMENT_TARGET=10.9
-        ../../macpython-download-cache-and-build-module-wheels.sh
+        ../../macpython-download-cache-and-build-module-wheels.sh "3.${{ matrix.python3-minor-version }}"
 
     - name: Publish Python package as GitHub Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: MacOSWheel3${{ matrix.python-version }}
+        name: MacOSWheel3${{ matrix.python3-minor-version }}
         path: Evaluated/ITKModuleTemplate/dist
 
   build-windows-python-packages:
