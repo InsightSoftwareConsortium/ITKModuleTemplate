@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.3)
+cmake_minimum_required(VERSION 3.22.1...3.29.0 FATAL_ERROR)
 project({{ cookiecutter.module_name }}Examples)
 
 set(ExampleSpecificComponents
