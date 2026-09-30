@@ -211,12 +211,9 @@ jobs:
         cd "${GITHUB_WORKSPACE}/Evaluated/ITKModuleTemplate"
         export ITK_PACKAGE_VERSION=${{ env.itk-wheel-tag }}
         export ITKPYTHONPACKAGE_TAG=${{ env.itk-python-package-tag }}
-        for manylinux_version in "_2_28" "2014"; do
-          rm -rf ITKPythonPackage
-          export MANYLINUX_VERSION=${manylinux_version}
-          echo "Building for manylinux specialization ${MANYLINUX_VERSION}"
-          ../../dockcross-manylinux-download-cache-and-build-module-wheels.sh cp${{ matrix.python-version }}
-        done
+        # ITKPythonBuilds provides only manylinux_2_28 archives since ITK 6
+        export MANYLINUX_VERSION=_2_28
+        ../../dockcross-manylinux-download-cache-and-build-module-wheels.sh cp${{ matrix.python-version }}
 
     - name: Publish Python package as GitHub Artifact
       uses: actions/upload-artifact@v7.0.1
@@ -225,7 +222,8 @@ jobs:
         path: Evaluated/ITKModuleTemplate/dist
 
   build-macos-python-packages:
-    runs-on: macos-15-intel
+    # ITKPythonBuilds provides only arm64 macOS archives since ITK 6
+    runs-on: macos-15
     strategy:
       max-parallel: 2
       matrix:
