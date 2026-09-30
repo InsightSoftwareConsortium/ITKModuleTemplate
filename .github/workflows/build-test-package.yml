@@ -9,11 +9,9 @@ on:
       - main
 
 env:
-  # v6.0a02
-  itk-git-tag: "v6.0a02"
-  itk-wheel-tag: "v6.0a02"
-  # v6.0a02 + fixes
-  itk-python-package-tag: "v6.0a02"
+  itk-git-tag: "v6.0b02"
+  itk-wheel-tag: "v6.0b02"
+  itk-python-package-tag: "v6.0b02"
   itk-python-package-org: "InsightSoftwareConsortium"
 
 jobs:
@@ -22,8 +20,8 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        # runners macos-13 is x86_64, macos-15 is arm64 by default
-        os: [ubuntu-24.04, windows-2022, macos-13, macos-15]
+        # macos-15 is arm64 by default
+        os: [ubuntu-24.04, windows-2022, macos-15-intel, macos-15]
         include:
           - os: ubuntu-24.04
             c-compiler: "gcc"
@@ -33,11 +31,11 @@ jobs:
             c-compiler: "cl.exe"
             cxx-compiler: "cl.exe"
             cmake-build-type: "Release"
-          - os: macos-13
+          - os: macos-15-intel
             c-compiler: "clang"
             cxx-compiler: "clang++"
             cmake-build-type: "MinSizeRel"
-            deployment_target: '10.9'
+            deployment_target: '13.0'
           - os: macos-15
             c-compiler: "clang"
             cxx-compiler: "clang++"
@@ -45,16 +43,16 @@ jobs:
             deployment_target: '13.0'
 
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v7.0.1
 
     - name: Free Disk Space (Ubuntu)
       if: matrix.os == 'ubuntu-24.04'
-      uses: jlumbroso/free-disk-space@v1.3.1
+      uses: jlumbroso/free-disk-space@v2.0.0
       with:
         large-packages: false
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v5.4.0
+      uses: actions/setup-python@v7.0.0
       with:
         python-version: "3.11"
 
@@ -65,17 +63,12 @@ jobs:
         python -m pip install cookiecutter
 
     - name: Get specific version of CMake, Ninja
-      uses: lukka/get-cmake@v3.31.5
+      uses: lukka/get-cmake@v4.4.2
 
-    - name: 'Specific XCode version 14.3.1'
-      if: matrix.os == 'macos-13'
+    - name: 'Specific XCode version 16.4'
+      if: startsWith(matrix.os, 'macos-15')
       run: |
-        sudo xcode-select -s "/Applications/Xcode_14.3.1.app"
-
-    - name: 'Specific XCode version 16.2'
-      if: matrix.os == 'macos-15'
-      run: |
-        sudo xcode-select -s "/Applications/Xcode_16.2.app"
+        sudo xcode-select -s "/Applications/Xcode_16.4.app"
 
     - name: Download ITK
       run: |
@@ -180,16 +173,12 @@ jobs:
         python-version: ["39", "310", "311","312","313"]
 
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v7.0.1
 
-    - name: 'Free up disk space'
-      run: |
-        # Workaround for https://github.com/actions/virtual-environments/issues/709
-        df -h
-        sudo apt-get clean
-        sudo rm -rf "/usr/local/share/boost"
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        df -h
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@v2.0.0
+      with:
+        large-packages: false
 
     - name: 'Fetch build dependencies'
       shell: bash
@@ -198,12 +187,12 @@ jobs:
         unzstd --version
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v5.4.0
+      uses: actions/setup-python@v7.0.0
       with:
         python-version: "3.11"
 
     - name: Get specific version of CMake, Ninja
-      uses: lukka/get-cmake@v3.31.5
+      uses: lukka/get-cmake@v4.4.2
 
     - name: Evaluate template
       shell: bash
@@ -230,27 +219,27 @@ jobs:
         done
 
     - name: Publish Python package as GitHub Artifact
-      uses: actions/upload-artifact@v4.6.0
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: LinuxWheel3${{ matrix.python-version }}
         path: Evaluated/ITKModuleTemplate/dist
 
   build-macos-python-packages:
-    runs-on: macos-13
+    runs-on: macos-15-intel
     strategy:
       max-parallel: 2
       matrix:
         python3-minor-version: ["9", "10", "11", "12", "13"]
 
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v7.0.1
 
-    - name: 'Specific XCode version'
+    - name: 'Specific XCode version 16.4'
       run: |
-        sudo xcode-select -s "/Applications/Xcode_14.3.1.app"
+        sudo xcode-select -s "/Applications/Xcode_16.4.app"
 
     - name: Get specific version of CMake, Ninja
-      uses: lukka/get-cmake@v3.31.5
+      uses: lukka/get-cmake@v4.4.2
 
     - name: 'Fetch build script'
       run: |
@@ -258,7 +247,7 @@ jobs:
         chmod u+x macpython-download-cache-and-build-module-wheels.sh
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v5.4.0
+      uses: actions/setup-python@v7.0.0
       with:
         python-version: "3.11"
 
@@ -275,12 +264,12 @@ jobs:
         export ITK_PACKAGE_VERSION=${{ env.itk-wheel-tag }}
         export ITKPYTHONPACKAGE_TAG=${{ env.itk-python-package-tag }}
         export ITKPYTHONPACKAGE_ORG=${{ env.itk-python-package-org }}
-        # For Xcode 16.2, the recommended "MACOSX_DEPLOYMENT_TARGET" is "13.0"; this means your application should be built to run on macOS Ventura (version 13.0) or later. 
+        # For Xcode 16.4, the recommended "MACOSX_DEPLOYMENT_TARGET" is "13.0"; this means your application should be built to run on macOS Ventura (version 13.0) or later.
         export MACOSX_DEPLOYMENT_TARGET=${{ matrix.deployment_target || '13.0' }}
         ../../macpython-download-cache-and-build-module-wheels.sh "3.${{ matrix.python3-minor-version }}"
 
     - name: Publish Python package as GitHub Artifact
-      uses: actions/upload-artifact@v4.6.0
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: MacOSWheel3${{ matrix.python3-minor-version }}
         path: Evaluated/ITKModuleTemplate/dist
@@ -293,7 +282,7 @@ jobs:
         python-version-minor: ["9", "10", "11"]
 
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v7.0.1
 
     - name: 'Install Python'
       run: |
@@ -301,15 +290,15 @@ jobs:
         $pythonVersion = "3.${{ matrix.python-version-minor }}"
         iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/scikit-build/scikit-ci-addons/master/windows/install-python.ps1'))
 
-    - uses: actions/setup-python@v5.4.0
+    - uses: actions/setup-python@v7.0.0
       with:
         python-version: '3.x'
 
     - name: Get specific version of CMake, Ninja
-      uses: lukka/get-cmake@v3.31.5
+      uses: lukka/get-cmake@v4.4.2
 
     - name: Set up Python 3.11/
-      uses: actions/setup-python@v5.4.0
+      uses: actions/setup-python@v7.0.0
       with:
         python-version: "3.11"
 
@@ -351,7 +340,7 @@ jobs:
         C:\Python3${{ matrix.python-version-minor }}-x64\python.exe C:\P\IPP\scripts\windows_build_module_wheels.py --py-envs "3${{ matrix.python-version-minor }}-x64"
 
     - name: Publish Python package as GitHub Artifact
-      uses: actions/upload-artifact@v4.6.0
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: WindowsWheel3.${{ matrix.python-version-minor }}
         path: Evaluated/ITKModuleTemplate/dist

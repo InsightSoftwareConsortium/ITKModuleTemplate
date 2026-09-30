@@ -1,0 +1,22 @@
+# Custom attribute to mark sources as using our C++/C code style.
+[attr]our-c-style  whitespace=tab-in-indent,no-lf-at-eof  hooks.style=KWStyle,clangformat
+*.c              our-c-style
+*.h              our-c-style
+*.cxx            our-c-style
+*.hxx            our-c-style
+*.txx            our-c-style
+
+# Custom attribute to mark sources as using our CMake code style.
+[attr]our-cmake-style  whitespace=tab-in-indent,no-lf-at-eof hooks.style=cmakeformat
+*.txt            our-cmake-style
+*.cmake          our-cmake-style
+*.wrap           our-cmake-style
+CMakeLists.txt   our-cmake-style
+
+# ExternalData content links must have LF newlines
+*.md5            crlf=input
+*.sha512         crlf=input
+*.cid            crlf=input
+
+# ghostflow-director GitHub automatic check for maximum repository file size
+*                hooks-max-size=100000
